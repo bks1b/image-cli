@@ -23,9 +23,6 @@ const double CONFIG[3][4] = {
 const double COUNT_OFFSET = 100;
 const double COUNT_SCALAR = 100;
 
-const double GREYSCALE_MIN = 20;
-const double GREYSCALE_MAX = 220;
-
 // line endpoint precision
 const double T_STEP = 0.5;
 
@@ -38,7 +35,7 @@ double random_offset(const double *config) {
     return unif(mt);
 }
 
-void get_lines(color_t &color, lines_t &vec, bool is_greyscale) {
+void get_lines(color_t &color, lines_t &vec) {
     double avg = get_greyscale(color);
     int count = (255 - avg + COUNT_OFFSET) / COUNT_SCALAR;
     for (int i = 0; i < count; i++) {
@@ -47,12 +44,11 @@ void get_lines(color_t &color, lines_t &vec, bool is_greyscale) {
             double v = avg / 255 * (CONFIG[j][0] - CONFIG[j][1]) + CONFIG[j][1];
             tup[j] = j > 0 ? v / std::pow(count, CONFIG[j][2]) : v + CONFIG[j][2] * i / count;
         }
-        double greyscale_v = avg / 255 * (GREYSCALE_MAX - GREYSCALE_MIN) + GREYSCALE_MIN;
-        vec.push_back({ tup[0], tup[1], tup[2], is_greyscale ? color_t ({ greyscale_v, greyscale_v, greyscale_v }) : color });
+        vec.push_back({ tup[0], tup[1], tup[2], color });
     }
 }
 
-void get_areas(map_t &pixels, map_t &assigned, std::vector<std::vector<int>> &edges, Image &img, colors_t &colors) {
+void get_areas(map_t &pixels, map_t &assigned, matrix_t &edges, Image &img, colors_t &colors) {
     map_t overlap;
     auto set_overlap = [&overlap](const auto &self, int x, int y) -> void {
         if (x > y) self(self, y, x);
@@ -93,7 +89,7 @@ void get_areas(map_t &pixels, map_t &assigned, std::vector<std::vector<int>> &ed
 }
 
 // rotates the coordinates of each area, gets the lines' positions, then undoes the rotation
-void render_sketch(map_t &pixels, map_t &assigned, std::vector<std::vector<int>> &edges, ImageWriter &result, lines_t *lines) {
+void render_sketch(map_t &pixels, map_t &assigned, matrix_t &edges, ImageWriter &result, lines_t *lines) {
     for (int g = 0; g < edges.size(); g++) {
         if (edges[g].size() == 0) continue;
         for (auto &line : lines[pixels[edges[g][0]]]) {
@@ -110,6 +106,7 @@ void render_sketch(map_t &pixels, map_t &assigned, std::vector<std::vector<int>>
                     })->at(i);
                 }
             }
+
             double r = (bounds[1][1] - bounds[1][0]) / density;
             for (double u = bounds[1][0] + density / 2 * (r - int(r)); u <= bounds[1][1]; u += density * random_offset(CONFIG[1])) {
                 bool line_start = false;
@@ -132,23 +129,23 @@ void render_sketch(map_t &pixels, map_t &assigned, std::vector<std::vector<int>>
     }
 }
 
-Sketch::Sketch(): Command("sketch", "Applies a sketch effect to an image.", "color count (quantization), greyscale (0/1)", { 6, 0 }) {}
+Sketch::Sketch(): Command("sketch", "Applies a sketch effect to an image.", "color count (quantization)", { 6 }) {}
 
 // reduces the image's palette, splits the image into areas and sketches each area
-void Sketch::exec(Image &img, const char *path, std::vector<double> args) {
-    int color_count = args[0];
+void Sketch::exec(Image &img, std::string &path, doubles_t &params, flags_t &flags) {
+    int color_count = params[0];
     if (color_count < 2) {
         std::cout << "Color count expected to be at least 2.\n";
         return;
     }
-    ImageWriter result(img.width, img.height);
+    ImageWriter result(img.width, img.height, flags);
     map_t pixels;
     colors_t colors;
     lines_t lines[color_count];
     quantize(img, pixels, colors, color_count);
-    for (int i = 0; i < color_count; i++) get_lines(colors[i], lines[i], args[1] != 0);
+    for (int i = 0; i < color_count; i++) get_lines(colors[i], lines[i]);
     map_t assigned;
-    std::vector<std::vector<int>> edges;
+    matrix_t edges;
     get_areas(pixels, assigned, edges, img, colors);
     render_sketch(pixels, assigned, edges, result, lines);
     result.write(path);

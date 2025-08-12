@@ -1,16 +1,21 @@
 #include <cmath>
+#include <stdexcept>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "../stb_image_write.h"
 
 #include "images/ImageWriter.hpp"
 
+const double GREYSCALE_MIN = 20;
+const double GREYSCALE_MAX = 220;
+
 const double SIZE_OFFSET = 1.75;
 const double LINE_FADE = 3.5;
 
-ImageWriter::ImageWriter(int w, int h) {
+ImageWriter::ImageWriter(int w, int h, flags_t &f) {
     width = w;
     height = h;
+    flags = f;
     size = w * h;
     data = (uint8_t*)malloc(3 * size);
     for (int i = 0; i < 3 * size; i++) data[i] = 255;
@@ -19,8 +24,14 @@ ImageWriter::ImageWriter(int w, int h) {
 ImageWriter::~ImageWriter() {}
 
 void ImageWriter::set_px(vec_t pos, color_t &color, double a) {
+    if (!in_rect(pos)) return;
     a = std::min(1., std::max(0., a));
-    if (in_rect(pos)) for (int c = 0; c < 3; c++) data[3 * get_idx(pos) + c] = color[c] * a + 255 * (1 - a);
+    auto resolved = flags.contains("color")
+        ? parse_color(flags["color"])
+        : flags.contains("greyscale")
+            ? repeat_channel(get_greyscale(color) / 255 * (GREYSCALE_MAX - GREYSCALE_MIN) + GREYSCALE_MIN)
+            : color;
+    for (int c = 0; c < 3; c++) data[3 * get_idx(pos) + c] = resolved[c] * a + 255 * (1 - a);
 }
 
 void ImageWriter::draw_line(vec_t &a, vec_t &b, double size, color_t &color) {
@@ -41,6 +52,6 @@ void ImageWriter::draw_line(vec_t &a, vec_t &b, double size, color_t &color) {
     }
 }
 
-void ImageWriter::write(const char *path) {
-    stbi_write_png(path, width, height, 3, data, width * 3);
+void ImageWriter::write(std::string &path) {
+    stbi_write_png(path.c_str(), width, height, 3, data, width * 3);
 }

@@ -16,7 +16,7 @@ void quantize(Image &img, map_t &pixels, colors_t &centroids, int count) {
         return std::hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
     };
     while (true) {
-        std::vector<std::vector<int>> clusters(count, std::vector<int> {});
+        matrix_t clusters(count, ints_t {});
         for (int p = 0; p < img.size; p++) {
             clusters[std::distance(std::begin(centroids), std::min_element(centroids.begin(), centroids.end(), [p, &dist](color_t &a, color_t &b) {
                 return dist(a, p) < dist(b, p);

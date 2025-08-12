@@ -1,19 +1,23 @@
 # Examples
 
 `.\build\imgcli.exe sketch readme/balaton.jpg readme/sketch.png 6`
+
 <img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/sketch.png">
 
 `.\build\imgcli.exe ascii readme/text.png readme/ascii.txt 2 2`
+
 <img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/ascii.png">
 
 # Commands
 
+Use the `--color=<#fff|#ffffff|255,255,255>` flag to specify the result's color, or `--greyscale` to convert the result to greyscale. By default, the original image's colors are used.
+
 All parameters are optional.
 
-| Name   | Description                          | Parameters                                  | 
-|--------|--------------------------------------|---------------------------------------------|
-| sketch | Applies a sketch effect to an image. | color count (quantization), greyscale (0/1) | 
-| ascii  | Generates ASCII art from an image.   | shrink X, shrink Y, brightness weight       | 
+| Name   | Description                          | Parameters                            | 
+|--------|--------------------------------------|---------------------------------------|
+| sketch | Applies a sketch effect to an image. | color count (quantization)            | 
+| ascii  | Generates ASCII art from an image.   | shrink X, shrink Y, brightness weight | 
 
 # Build
 

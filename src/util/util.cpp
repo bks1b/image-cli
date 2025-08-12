@@ -1,4 +1,6 @@
 #include <cmath>
+#include <stdexcept>
+#include <sstream>
 
 #include "util/util.hpp"
 
@@ -28,4 +30,24 @@ void rotate_line(vec_t &a, vec_t &b, double angle) {
 
 double get_greyscale(color_t c) {
     return (c[0] + c[1] + c[2]) / 3.;
+}
+
+color_t repeat_channel(double c) {
+    return { c, c, c };
+}
+
+color_t parse_color(std::string &str) {
+    color_t color;
+    if (str.size() > 0 && str[0] == '#') {
+        double chars = (str.size() - 1) / 3.;
+        if (chars != 1 && chars != 2) throw std::runtime_error("Invalid hex color length.");
+        for (int i = 0; i < 3; i++) color[i] = std::stoi(std::string(1, str[chars * i + 1]) + str[chars * i + chars], nullptr, 16);
+    } else {
+        int i = 0;
+        std::stringstream ss(str);
+        std::string token;
+        while (getline(ss, token, ',')) color[i++] = std::stod(token);
+        if (i != 3) throw std::runtime_error("Invalid RGB color length.");
+    }
+    return color;
 }

@@ -4,5 +4,5 @@
 
 struct Ascii : Command {
     Ascii();
-    virtual void exec(Image &img, const char *path, std::vector<double> args) override;
+    virtual void exec(Image &img, std::string &path, doubles_t &params, flags_t &flags) override;
 };

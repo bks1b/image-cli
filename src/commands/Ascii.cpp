@@ -5,10 +5,9 @@
 #include <cmath>
 #include <numeric>
 
-#include "images/ImageWriter.hpp"
 #include "commands/Ascii.hpp"
 
-typedef std::vector<std::pair<int, std::vector<double>>> data_t;
+typedef std::vector<std::pair<int, doubles_t>> data_t;
 
 const char *TEMP = "temp";
 const char *FILENAME = "ascii.txt";
@@ -34,9 +33,10 @@ data_t create_data() {
         std::string path = TEMP + ("/" + id);
         if (id.length() < 9) id.insert(0, 9 - id.length(), '0');
         if (!std::filesystem::exists(path)) std::system(("curl " + (URL + id + " -o " + path)).c_str());
+
         Image img;
         img.read(path);
-        std::vector<double> areas;
+        doubles_t areas;
         double min = 255;
         double step_y = (END[1] - START[1]) / H;
         double step_x = (END[0] - START[0]) / W;
@@ -76,16 +76,15 @@ data_t get_data() {
             continue;
         }
         int id = i == 1 ? -1 : 0;
-        std::vector<double> vec;
-        std::stringstream ss;
-        ss << line;
+        doubles_t vec;
+        std::stringstream ss(line);
         std::string num;
         while (std::getline(ss, num, ',')) {
             if (id == 0) id = std::stoi(num);
             else vec.push_back(std::stod(num));
         }
         if (i == 1) {
-            if (vec != std::vector<double> { START[0], START[1], END[0], END[1] }) {
+            if (vec != doubles_t { START[0], START[1], END[0], END[1] }) {
                 file.close();
                 return create_data();
             }
@@ -98,11 +97,11 @@ data_t get_data() {
 Ascii::Ascii(): Command("ascii", "Generates ASCII art from an image.", "shrink X, shrink Y, brightness weight", { 1, 1, 1.5 }) {}
 
 // finds the best match to the chars of each area of the image
-void Ascii::exec(Image &img, const char *path, std::vector<double> args) {
-    int shrink_x = args[0];
-    int shrink_y = args[1];
+void Ascii::exec(Image &img, std::string &path, doubles_t &params, flags_t &_) {
+    int shrink_x = params[0];
+    int shrink_y = params[1];
     auto data = get_data();
-    std::vector<double> sums;
+    doubles_t sums;
     for (auto &x : data) {
         auto vec = std::get<1>(x);
         sums.push_back(std::accumulate(vec.begin(), vec.end(), 0., [](double a, double b) {
@@ -112,7 +111,7 @@ void Ascii::exec(Image &img, const char *path, std::vector<double> args) {
     std::ofstream file(path);
     for (int y = 0; y + H * shrink_y - 1 < img.height; y += H * shrink_y) {
         for (int x = 0; x + W * shrink_x - 1 < img.width; x += W * shrink_x) {
-            std::vector<double> area;
+            doubles_t area;
             double area_min;
             double area_max;
             double area_sum = 0;
@@ -129,7 +128,7 @@ void Ascii::exec(Image &img, const char *path, std::vector<double> args) {
             double min_val;
             for (auto it = data.begin(); it != data.end(); it++) {
                 // average color match
-                double val = args[2] * std::abs(area_sum - sums[std::distance(data.begin(), it)]) / 255;
+                double val = params[2] * std::abs(area_sum - sums[std::distance(data.begin(), it)]) / 255;
                 // normalized area by area match
                 for (int i = 0; i < W * H; i++) val += std::abs((area[i] - area_min + 1) / (area_max - area_min + 1) - std::get<1>(*it)[i] / 255);
                 int min_dist = std::distance(min_it, it);

@@ -10,7 +10,7 @@ Image::~Image() {
     stbi_image_free(data);
 }
 
-void Image::read(std::string path) {
+void Image::read(std::string &path) {
     if (stbi_info(path.c_str(), nullptr, nullptr, nullptr) == 0) throw std::runtime_error("Failed to read image.");
     data = stbi_load(path.c_str(), &width, &height, nullptr, 4);
     size = width * height;
@@ -44,6 +44,6 @@ int Image::get_idx(vec_t v) {
     return std::round(v[0]) + std::round(v[1]) * width;
 }
 
-bool Image::in_rect(vec_t pos) {
+bool Image::in_rect(vec_t &pos) {
     return pos[0] >= 0 && pos[1] >= 0 && pos[0] < width && pos[1] < height;
 }

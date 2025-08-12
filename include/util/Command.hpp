@@ -3,8 +3,8 @@
 #include "images/Image.hpp"
 
 struct Command {
-    Command(std::string name, std::string desc, std::string arg_desc, std::vector<double> args);
-    virtual void exec(Image &img, const char *path, std::vector<double> args);
+    Command(std::string name, std::string desc, std::string params_desc, doubles_t params);
+    virtual void exec(Image &img, std::string &path, doubles_t &params, flags_t &flags);
     std::vector<std::string> columns;
-    std::vector<double> def_args;
+    doubles_t def_params;
 };

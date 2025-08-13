@@ -1,12 +1,5 @@
 # Examples
-
-`.\build\imgcli.exe sketch readme/balaton.jpg readme/sketch.png 6`
-
-<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/sketch.png">
-
-`.\build\imgcli.exe ascii readme/text.png readme/ascii.txt 2 2`
-
-<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/ascii.png">
+{examples}
 
 # Commands
 

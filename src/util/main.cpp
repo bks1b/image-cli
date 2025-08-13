@@ -5,6 +5,12 @@
 
 #include "util/Command.hpp"
 
+const std::string examples[][3] = {
+    { "sketch", "balaton.jpg", "6" },
+    { "ascii", "text.png", "2 2" },
+    { "chart", "text.png", "--color=#000" }
+};
+
 std::vector<std::string> read_args(int argc, char **argv, doubles_t &params, flags_t &flags) {
     std::vector<std::string> first;
     for (int i = 1; i < argc; i++) {
@@ -62,8 +68,15 @@ void write_readme(std::vector<Command*> &commands) {
     std::ofstream readme_out("README.md");
     std::string line;
     while (std::getline(readme_in, line)) {
-        if (line == "{commands}\r" || line == "{commands}") ascii_table(commands, readme_out, false);
-        else readme_out << line << "\n";
+        if (line.length() > 0 && line.back() == '\r') line.pop_back();
+        if (line == "{commands}") ascii_table(commands, readme_out, false);
+        else if (line == "{examples}") {
+            for (auto &e : examples) {
+                std::string cmd = e[0] + " readme/input/" + e[1] + " readme/output/" + e[0] + (e[0] == "ascii" ? ".txt " : ".png ") + e[2];
+                readme_out << "\r\n`.\\build\\imgcli.exe " << cmd << "`\r\n\r\n<img src=\"https://raw.githubusercontent.com/bks1b/image-cli/main/readme/output/" << e[0] << ".png\" style=\"max-width: 600px;\">\r\n";
+                std::system(("\"build/imgcli\" " + cmd).c_str());
+            }
+        } else readme_out << line << "\r\n";
     }
     readme_out.close();
     readme_in.close();

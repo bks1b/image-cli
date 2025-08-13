@@ -1,12 +1,16 @@
 # Examples
 
-`.\build\imgcli.exe sketch readme/balaton.jpg readme/sketch.png 6`
+`.\build\imgcli.exe sketch readme/input/balaton.jpg readme/output/sketch.png 6`
 
-<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/sketch.png">
+<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/output/sketch.png" style="max-width: 600px;">
 
-`.\build\imgcli.exe ascii readme/text.png readme/ascii.txt 2 2`
+`.\build\imgcli.exe ascii readme/input/text.png readme/output/ascii.txt 2 2`
 
-<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/ascii.png">
+<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/output/ascii.png" style="max-width: 600px;">
+
+`.\build\imgcli.exe chart readme/input/text.png readme/output/chart.png --color=#000`
+
+<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/output/chart.png" style="max-width: 600px;">
 
 # Commands
 

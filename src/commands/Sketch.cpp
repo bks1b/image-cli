@@ -16,7 +16,7 @@ typedef std::vector<std::tuple<double, double, double, color_t>> lines_t;
 const double CONFIG[3][4] = {
     { std::numbers::pi / 2.5, -std::numbers::pi / 2.5, std::numbers::pi / 3, std::numbers::pi / 125 },
     { 3.75, 2.5, -0.6, 0.2 },
-    { 2, 2, 0.5, 1 }
+    { 1.5, 1.5, 0.5, 1 }
 };
 
 // cross-hatching

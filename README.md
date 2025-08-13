@@ -16,8 +16,10 @@ All parameters are optional.
 
 | Name   | Description                          | Parameters                            | 
 |--------|--------------------------------------|---------------------------------------|
-| sketch | Applies a sketch effect to an image. | color count (quantization)            | 
 | ascii  | Generates ASCII art from an image.   | shrink X, shrink Y, brightness weight | 
+| chart  | Draws a line chart from an image.    | step Y, height                        | 
+| circle | Draws an image with circles.         | radius                                | 
+| sketch | Applies a sketch effect to an image. | color count (quantization)            | 
 
 # Build
 

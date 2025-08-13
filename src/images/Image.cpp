@@ -26,13 +26,18 @@ color_t Image::get_px(int i) {
 
 color_t Image::get_area(int x, int y, int w, int h) {
     color_t avg = { 0, 0, 0 };
-    double area = w * h;
+    int area = w * h;
     for (int dy = 0; dy < h; dy++) {
         for (int dx = 0; dx < w; dx++) {
-            int i = get_idx({ x + dx, y + dy });
-            for (int c = 0; c < 3; c++) avg[c] += get_channel(i, c) / area;
+            vec_t pos = { x + dx, y + dy };
+            if (!in_rect(pos)) area--;
+            else {
+                int i = get_idx(pos);
+                for (int c = 0; c < 3; c++) avg[c] += get_channel(i, c);
+            }
         }
     }
+    mult_arr(avg, 1. / area);
     return avg;
 }
 
@@ -45,5 +50,5 @@ int Image::get_idx(vec_t v) {
 }
 
 bool Image::in_rect(vec_t &pos) {
-    return pos[0] >= 0 && pos[1] >= 0 && pos[0] < width && pos[1] < height;
+    return pos[0] >= 0 && pos[1] >= 0 && std::round(pos[0]) < width && std::round(pos[1]) < height;
 }

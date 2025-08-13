@@ -1,4 +1,4 @@
-#include <iostream>
+#include <stdexcept>
 #include <cmath>
 #include <numbers>
 #include <random>
@@ -134,10 +134,7 @@ Sketch::Sketch(): Command("sketch", "Applies a sketch effect to an image.", "col
 // reduces the image's palette, splits the image into areas and sketches each area
 void Sketch::exec(Image &img, std::string &path, doubles_t &params, flags_t &flags) {
     int color_count = params[0];
-    if (color_count < 2) {
-        std::cout << "Color count expected to be at least 2.\n";
-        return;
-    }
+    if (color_count < 2) throw std::runtime_error("Color count expected to be at least 2.");
     ImageWriter result(img.width, img.height, flags);
     map_t pixels;
     colors_t colors;

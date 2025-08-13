@@ -3,13 +3,17 @@
 
 #include "util/main.hpp"
 
-#include "commands/Sketch.hpp"
 #include "commands/Ascii.hpp"
+#include "commands/Chart.hpp"
+#include "commands/Circle.hpp"
+#include "commands/Sketch.hpp"
 
 int main(int argc, char **argv) {
-    Sketch sketch;
     Ascii ascii;
-    std::vector<Command*> commands = { &sketch, &ascii };
+    Chart chart;
+    Circle circle;
+    Sketch sketch;
+    std::vector<Command*> commands = { &ascii, &chart, &circle, &sketch };
 
     doubles_t params;
     flags_t flags;

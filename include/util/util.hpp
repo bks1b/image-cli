@@ -20,7 +20,14 @@ vec_t rotate(vec_t v, double t);
 
 void add_vec(vec_t &a, vec_t b, double c);
 
+template<typename A>
+void mult_arr(A &a, double c) {
+    for (auto &v : a) v *= c;
+}
+
 void rotate_line(vec_t &a, vec_t &b, double angle);
+
+int round_by(int a, double b);
 
 double get_greyscale(color_t c);
 

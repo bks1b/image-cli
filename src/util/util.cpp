@@ -28,6 +28,10 @@ void rotate_line(vec_t &a, vec_t &b, double angle) {
     add_vec(b, mid, 1);
 }
 
+int round_by(int a, double b) {
+    return int(a / b) * b;
+}
+
 double get_greyscale(color_t c) {
     return (c[0] + c[1] + c[2]) / 3.;
 }

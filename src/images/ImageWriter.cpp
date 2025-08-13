@@ -12,6 +12,9 @@ const double GREYSCALE_MAX = 220;
 const double SIZE_OFFSET = 1.75;
 const double LINE_FADE = 3.5;
 
+const double RADIUS_OFFSET = 1;
+const double CIRCLE_FADE = 1;
+
 ImageWriter::ImageWriter(int w, int h, flags_t &f) {
     width = w;
     height = h;
@@ -23,7 +26,7 @@ ImageWriter::ImageWriter(int w, int h, flags_t &f) {
 
 ImageWriter::~ImageWriter() {}
 
-void ImageWriter::set_px(vec_t pos, color_t &color, double a) {
+void ImageWriter::set_px(vec_t &pos, color_t &color, double a) {
     if (!in_rect(pos)) return;
     a = std::min(1., std::max(0., a));
     auto resolved = flags.contains("color")
@@ -39,8 +42,8 @@ void ImageWriter::draw_line(vec_t &a, vec_t &b, double size, color_t &color) {
     vec_t normal = { (b[1] - a[1]) / dist, (a[0] - b[0]) / dist };
     vec_t pos = a;
     for (int i = 0; i <= std::round(dist); i++) {
-        for (int j = size / 2; j >= 0; j--) {
-            for (int k = -1; k < (j > 0 ? 2 : 1); k++) {
+        for (double j = std::ceil(size / 2); j > -1; j -= 0.5) {
+            for (int k = -1; k < (j > 0 ? 2 : 1); k += 2) {
                 vec_t pos_moved = pos;
                 add_vec(pos_moved, normal, j * k / 2.);
                 // length of projection
@@ -49,6 +52,35 @@ void ImageWriter::draw_line(vec_t &a, vec_t &b, double size, color_t &color) {
             }
         }
         add_vec(pos, { -normal[1], normal[0] }, 1);
+    }
+}
+
+// midpoint circle algorithm
+void ImageWriter::fill_circle(vec_t c, double r, color_t &color) {
+    r += RADIUS_OFFSET;
+    double x = 0;
+    double y = r - 1;
+    double dist = 2 * r - 1;
+    while (true) {
+        // mirror along y=x
+        for (int i = 0; i < 2; i++) {
+            double x_i = i > 0 ? y : x;
+            double y_i = x + y - x_i;
+            for (double d_x = x_i; d_x > -1; d_x--) {
+                // mirror along x=0
+                for (int c_x = -1; c_x < (d_x > 0 ? 2 : 1); c_x += 2) {
+                    // mirror along y=0
+                    for (int c_y = -1; c_y < 2; c_y += 2) {
+                        vec_t pos = { c[0] + d_x * c_x, c[1] + y_i * c_y };
+                        double d = std::hypot(std::round(pos[0]) - c[0], std::round(pos[1]) - c[1]);
+                        set_px(pos, color, (r * r - d * d) / (r * CIRCLE_FADE) - 1);
+                    }
+                }
+            }
+        }
+        if (x >= y) return;
+        dist -= 2 * x++ + 1;
+        if (dist < 0) dist -= 1 - 2 * y--;
     }
 }
 

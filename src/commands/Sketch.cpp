@@ -16,7 +16,7 @@ typedef std::vector<std::tuple<double, double, double, color_t>> lines_t;
 const double CONFIG[3][4] = {
     { std::numbers::pi / 2.5, -std::numbers::pi / 2.5, std::numbers::pi / 3, std::numbers::pi / 125 },
     { 3.75, 2.5, -0.6, 0.2 },
-    { 1.5, 1.5, 0.5, 1 }
+    { 2, 2, 0.5, 1 }
 };
 
 // cross-hatching
@@ -41,7 +41,7 @@ void get_lines(color_t &color, lines_t &vec) {
     for (int i = 0; i < count; i++) {
         double tup[3];
         for (int j = 0; j < 3; j++) {
-            double v = avg / 255 * (CONFIG[j][0] - CONFIG[j][1]) + CONFIG[j][1];
+            double v = std::lerp(CONFIG[j][0], CONFIG[j][1], avg / 255);
             tup[j] = j > 0 ? v / std::pow(count, CONFIG[j][2]) : v + CONFIG[j][2] * i / count;
         }
         vec.push_back({ tup[0], tup[1], tup[2], color });
@@ -108,7 +108,7 @@ void render_sketch(map_t &pixels, map_t &assigned, matrix_t &edges, ImageWriter 
             }
 
             double r = (bounds[1][1] - bounds[1][0]) / density;
-            for (double u = bounds[1][0] + density / 2 * (r - int(r)); u <= bounds[1][1]; u += density * random_offset(CONFIG[1])) {
+            for (double u = bounds[1][0] + density / 2 * (r - std::floor(r)); u <= bounds[1][1]; u += density * random_offset(CONFIG[1])) {
                 bool line_start = false;
                 double start_at;
                 for (double t = bounds[0][0]; t <= bounds[0][1]; t += T_STEP) {

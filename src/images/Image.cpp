@@ -1,4 +1,4 @@
-#include <iostream>
+#include <stdexcept>
 #include <cmath>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -16,12 +16,10 @@ void Image::read(std::string &path) {
     size = width * height;
 }
 
-double Image::get_channel(int i, int c) {
-    return data[4 * i + c] * data[4 * i + 3] / 255. + 255 - data[4 * i + 3];
-}
-
 color_t Image::get_px(int i) {
-    return { get_channel(i, 0), get_channel(i, 1), get_channel(i, 2) };
+    color_t c;
+    for (int j = 0; j < 3; j++) c[j] = std::lerp(255, data[4 * i + j], data[4 * i + 3] / 255.);
+    return c;
 }
 
 color_t Image::get_area(int x, int y, int w, int h) {
@@ -31,10 +29,7 @@ color_t Image::get_area(int x, int y, int w, int h) {
         for (int dx = 0; dx < w; dx++) {
             vec_t pos = { x + dx, y + dy };
             if (!in_rect(pos)) area--;
-            else {
-                int i = get_idx(pos);
-                for (int c = 0; c < 3; c++) avg[c] += get_channel(i, c);
-            }
+            else sum_arr(avg, get_px(get_idx(pos)));
         }
     }
     mult_arr(avg, 1. / area);

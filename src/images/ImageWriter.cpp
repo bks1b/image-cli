@@ -9,8 +9,8 @@
 const double GREYSCALE_MIN = 20;
 const double GREYSCALE_MAX = 220;
 
-const double SIZE_OFFSET = 1.75;
-const double LINE_FADE = 3.5;
+const double SIZE_OFFSET = 1;
+const double LINE_FADE = 1;
 
 const double RADIUS_OFFSET = 1;
 const double CIRCLE_FADE = 1;
@@ -34,7 +34,7 @@ void ImageWriter::set_px(vec_t &pos, color_t &color, double a) {
         : flags.contains("greyscale")
             ? repeat_channel(get_greyscale(color) / 255 * (GREYSCALE_MAX - GREYSCALE_MIN) + GREYSCALE_MIN)
             : color;
-    for (int c = 0; c < 3; c++) data[3 * get_idx(pos) + c] = resolved[c] * a + 255 * (1 - a);
+    for (int c = 0; c < 3; c++) data[3 * get_idx(pos) + c] = std::lerp(255, resolved[c], a);
 }
 
 void ImageWriter::draw_line(vec_t &a, vec_t &b, double size, color_t &color) {
@@ -42,16 +42,16 @@ void ImageWriter::draw_line(vec_t &a, vec_t &b, double size, color_t &color) {
     vec_t normal = { (b[1] - a[1]) / dist, (a[0] - b[0]) / dist };
     vec_t pos = a;
     for (int i = 0; i <= std::round(dist); i++) {
-        for (double j = std::ceil(size / 2); j > -1; j -= 0.5) {
-            for (int k = -1; k < (j > 0 ? 2 : 1); k += 2) {
+        for (double j = std::ceil(size) - 1; j > -0.5; j -= 0.5) {
+            for (int k = -1; k < (j == 0 ? 1 : 2); k += 2) {
                 vec_t pos_moved = pos;
-                add_vec(pos_moved, normal, j * k / 2.);
+                sum_arr(pos_moved, normal, j * k / 2.);
                 // length of projection
                 double d = (a[0] - std::round(pos_moved[0])) * normal[0] + (a[1] - std::round(pos_moved[1])) * normal[1];
-                set_px(pos_moved, color, ((size + SIZE_OFFSET) * (size + SIZE_OFFSET) - 4 * d * d) / (LINE_FADE * size) - 1);
+                set_px(pos_moved, color, ((size + SIZE_OFFSET) * (size + SIZE_OFFSET) / 4 - d * d) / (size / 2 * LINE_FADE) - 1);
             }
         }
-        add_vec(pos, { -normal[1], normal[0] }, 1);
+        sum_arr(pos, vec_t { -normal[1], normal[0] });
     }
 }
 

@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "images/ImageWriter.hpp"
 #include "commands/Circle.hpp"
 
@@ -12,7 +14,7 @@ void Circle::exec(Image &img, std::string &path, doubles_t &params, flags_t &fla
     for (int y = r; y + r <= img.height; y += 2 * r) {
         for (int x = r; x + r <= img.width; x += 2 * r) {
             auto color = img.get_area(x - r, y - r, 2 * r, 2 * r);
-            result.fill_circle({ x, y }, std::min(1., (1 - get_greyscale(color) / 255) * (MAX - MIN) + MIN) * r, color);
+            result.fill_circle({ x, y }, std::min(1., std::lerp(MAX, MIN, get_greyscale(color) / 255)) * r, color);
         }
     }
     result.write(path);

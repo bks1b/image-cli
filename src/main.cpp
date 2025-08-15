@@ -6,14 +6,18 @@
 #include "commands/Ascii.hpp"
 #include "commands/Chart.hpp"
 #include "commands/Circle.hpp"
+#include "commands/Field.hpp"
 #include "commands/Sketch.hpp"
+#include "commands/Spiral.hpp"
 
 int main(int argc, char **argv) {
     Ascii ascii;
     Chart chart;
     Circle circle;
+    Field field;
     Sketch sketch;
-    std::vector<Command*> commands = { &ascii, &chart, &circle, &sketch };
+    Spiral spiral;
+    std::vector<Command*> commands = { &ascii, &chart, &circle, &field, &sketch, &spiral };
 
     doubles_t params;
     flags_t flags;
@@ -26,7 +30,8 @@ int main(int argc, char **argv) {
         return cmd->columns[0] == first[0];
     });
     if (found == commands.end()) {
-        if (first.size() > 0) std::cout << "Command not found.\n";
+        if (first.size() > 0 && first[0] != "help") std::cout << "Command not found.\n";
+        std::cout << "Usage: imgcli.exe <command> <input> <output> [params...] [--color=#fff|#ffffff|255,255,255] [--greyscale]\nCommands:\n";
         ascii_table(commands, std::cout, true);
         return 0;
     }

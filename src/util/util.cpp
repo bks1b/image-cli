@@ -4,6 +4,10 @@
 
 #include "util/util.hpp"
 
+int round_by(int a, double b) {
+    return std::floor(a / b) * b;
+}
+
 vec_t rotate(vec_t v, double t) {
     return {
         v[0] * std::cos(t) - v[1] * std::sin(t),
@@ -11,25 +15,16 @@ vec_t rotate(vec_t v, double t) {
     };
 }
 
-void add_vec(vec_t &a, vec_t b, double c) {
-    a[0] += b[0] * c;
-    a[1] += b[1] * c;
-}
-
 void rotate_line(vec_t &a, vec_t &b, double angle) {
     vec_t mid = { 0, 0 };
-    add_vec(mid, a, 0.5);
-    add_vec(mid, b, 0.5);
-    add_vec(a, mid, -1);
-    add_vec(b, mid, -1);
+    sum_arr(mid, a, 0.5);
+    sum_arr(mid, b, 0.5);
+    sum_arr(a, mid, -1);
+    sum_arr(b, mid, -1);
     a = rotate(a, angle);
     b = rotate(b, angle);
-    add_vec(a, mid, 1);
-    add_vec(b, mid, 1);
-}
-
-int round_by(int a, double b) {
-    return int(a / b) * b;
+    sum_arr(a, mid);
+    sum_arr(b, mid);
 }
 
 double get_greyscale(color_t c) {

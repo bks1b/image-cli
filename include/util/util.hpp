@@ -16,18 +16,22 @@ typedef std::vector<ints_t> matrix_t;
 typedef std::unordered_map<int, int> map_t;
 typedef std::unordered_map<std::string, std::string> flags_t;
 
-vec_t rotate(vec_t v, double t);
-
-void add_vec(vec_t &a, vec_t b, double c);
+template<typename A, typename B>
+void sum_arr(A &a, B b, double c = 1) {
+    int i = 0;
+    for (auto &v : a) v += b[i++] * c;
+}
 
 template<typename A>
 void mult_arr(A &a, double c) {
     for (auto &v : a) v *= c;
 }
 
-void rotate_line(vec_t &a, vec_t &b, double angle);
-
 int round_by(int a, double b);
+
+vec_t rotate(vec_t v, double t);
+
+void rotate_line(vec_t &a, vec_t &b, double angle);
 
 double get_greyscale(color_t c);
 

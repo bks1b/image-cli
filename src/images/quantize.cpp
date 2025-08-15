@@ -25,10 +25,8 @@ void quantize(Image &img, map_t &pixels, colors_t &centroids, int count) {
         double diff = 0;
         for (int i = 0; i < count; i++) {
             color_t mean = { 0, 0, 0 };
-            for (int c = 0; c < 3; c++) {
-                for (auto p : clusters[i]) mean[c] += img.get_channel(p, c) / clusters[i].size();
-                diff += std::abs(mean[c] - centroids[i][c]);
-            }
+            for (auto p : clusters[i]) sum_arr(mean, img.get_px(p), 1. / clusters[i].size());
+            for (int c = 0; c < 3; c++) diff += std::abs(mean[c] - centroids[i][c]);
             centroids.push_back(mean);
         }
         if (diff / count <= CONVERGE_THRESHOLD) {

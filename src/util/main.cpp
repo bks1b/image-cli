@@ -8,7 +8,10 @@
 const std::string examples[][3] = {
     { "sketch", "balaton.jpg", "6" },
     { "ascii", "text.png", "2 2" },
-    { "chart", "text.png", "--color=#000" }
+    { "spiral", "monalisa.jpg", "15 --color=#000" },
+    { "chart", "text.png", "--color=#000" },
+    { "field", "monalisa.jpg", "16 --greyscale" },
+    { "circle", "balaton.jpg", "" }
 };
 
 std::vector<std::string> read_args(int argc, char **argv, doubles_t &params, flags_t &flags) {
@@ -71,9 +74,15 @@ void write_readme(std::vector<Command*> &commands) {
         if (line.length() > 0 && line.back() == '\r') line.pop_back();
         if (line == "{commands}") ascii_table(commands, readme_out, false);
         else if (line == "{examples}") {
+            int i = 0;
             for (auto &e : examples) {
+                bool toggle = i++ >= 3;
                 std::string cmd = e[0] + " readme/input/" + e[1] + " readme/output/" + e[0] + (e[0] == "ascii" ? ".txt " : ".png ") + e[2];
-                readme_out << "\r\n`.\\build\\imgcli.exe " << cmd << "`\r\n\r\n<img src=\"https://raw.githubusercontent.com/bks1b/image-cli/main/readme/output/" << e[0] << ".png\" style=\"max-width: 600px;\">\r\n";
+                readme_out << "\r\n" << (toggle ? "<details>\r\n<summary>" : "")
+                    << "<code>.\\build\\imgcli.exe " << cmd << "</code>"
+                    << (toggle ? "</summary>" : "\r\n")
+                    << "\r\n<img src=\"https://raw.githubusercontent.com/bks1b/image-cli/main/readme/output/" << e[0] << ".png\">\r\n"
+                    << (toggle ? "</details>\r\n" : "");
                 std::system(("\"build/imgcli\" " + cmd).c_str());
             }
         } else readme_out << line << "\r\n";

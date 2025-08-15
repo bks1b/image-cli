@@ -1,16 +1,31 @@
 # Examples
 
-`.\build\imgcli.exe sketch readme/input/balaton.jpg readme/output/sketch.png 6`
+<code>.\build\imgcli.exe sketch readme/input/balaton.jpg readme/output/sketch.png 6</code>
 
-<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/output/sketch.png" style="max-width: 600px;">
+<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/output/sketch.png">
 
-`.\build\imgcli.exe ascii readme/input/text.png readme/output/ascii.txt 2 2`
+<code>.\build\imgcli.exe ascii readme/input/text.png readme/output/ascii.txt 2 2</code>
 
-<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/output/ascii.png" style="max-width: 600px;">
+<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/output/ascii.png">
 
-`.\build\imgcli.exe chart readme/input/text.png readme/output/chart.png --color=#000`
+<code>.\build\imgcli.exe spiral readme/input/monalisa.jpg readme/output/spiral.png 15 --color=#000</code>
 
-<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/output/chart.png" style="max-width: 600px;">
+<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/output/spiral.png">
+
+<details>
+<summary><code>.\build\imgcli.exe chart readme/input/text.png readme/output/chart.png --color=#000</code></summary>
+<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/output/chart.png">
+</details>
+
+<details>
+<summary><code>.\build\imgcli.exe field readme/input/monalisa.jpg readme/output/field.png 16 --greyscale</code></summary>
+<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/output/field.png">
+</details>
+
+<details>
+<summary><code>.\build\imgcli.exe circle readme/input/balaton.jpg readme/output/circle.png </code></summary>
+<img src="https://raw.githubusercontent.com/bks1b/image-cli/main/readme/output/circle.png">
+</details>
 
 # Commands
 
@@ -18,12 +33,14 @@ Use the `--color=<#fff|#ffffff|255,255,255>` flag to specify the result's color,
 
 All parameters are optional.
 
-| Name   | Description                          | Parameters                            | 
-|--------|--------------------------------------|---------------------------------------|
-| ascii  | Generates ASCII art from an image.   | shrink X, shrink Y, brightness weight | 
-| chart  | Draws a line chart from an image.    | step Y, height                        | 
-| circle | Draws an image with circles.         | radius                                | 
-| sketch | Applies a sketch effect to an image. | color count (quantization)            | 
+| Name   | Description                                 | Parameters                            | 
+|--------|---------------------------------------------|---------------------------------------|
+| ascii  | Generates ASCII art from an image.          | shrink X, shrink Y, brightness weight | 
+| chart  | Draws a line chart from an image.           | step Y, height, size                  | 
+| circle | Draws an image with circles.                | radius                                | 
+| field  | Draws a vector field representing an image. | size                                  | 
+| sketch | Applies a sketch effect to an image.        | color count (quantization)            | 
+| spiral | Draws a spiral representing an image.       | gap, segment length, smoothness area  | 
 
 # Build
 
